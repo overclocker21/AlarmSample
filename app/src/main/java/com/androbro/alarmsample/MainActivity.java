@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         temperatureTV.setText(tempString);
         windTV.setText(windString);
 
-        //registering receiver:
+        //registering receiver dynamically:
         //also, it will be possible for the reciever to register on_boot_complete broadcasts
         //and start the service once the device completes booting(in case user restarts it)
         //I didn't implement restarting service after the device has been rebooted. It's just a
@@ -75,29 +74,6 @@ public class MainActivity extends AppCompatActivity {
                     5000, pendingIntent);
     }
 
-    @Override
-    public void onResume(){
-        super.onResume();
-
-        sharedpreferences = context.getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
-
-        //when the app first starts sometimes it takes couple of seconds to parse data, fill up the
-        //shared prefs file and set up the values. So here I put default values stating that information
-        //is being updated.
-        String stationId = sharedpreferences.getString("station", "Updating..");
-        String observationTime = sharedpreferences.getString("observation", "Updating..");
-        String weather = sharedpreferences.getString("weather", "Updating..");
-        String tempString = sharedpreferences.getString("temperature", "Updating..");
-        String windString = sharedpreferences.getString("wind", "Updating..");
-
-        Log.i("SHARED", "" + stationId);
-
-        stationIdTV.setText(stationId);
-        observationTimeTV.setText(observationTime);
-        weatherTV.setText(weather);
-        temperatureTV.setText(tempString);
-        windTV.setText(windString);
-    }
 
     @Override
     public void onDestroy() {
@@ -124,16 +100,24 @@ public class MainActivity extends AppCompatActivity {
                 String windString = receivedWeather.getWind();
 
                 //setting up values right away after the service completes parsing data
-                //for the firat time.
-                stationIdTV.setText(stationId);
-                observationTimeTV.setText(observationTime);
-                weatherTV.setText(weather);
-                temperatureTV.setText(tempString);
-                windTV.setText(windString);
+                //for the firat time. And also checking if the returned object's field is equal to
+                //null. If it is, then something happened with the connection, so we don't need
+                //to store it in SharedPrefs file.
+                if (stationId == null){
+                    Toast.makeText(getApplicationContext(), "No internet connection, last updated date loaded",
+                            Toast.LENGTH_SHORT).show();
+                    return;
+                }else {
+                    stationIdTV.setText(stationId);
+                    observationTimeTV.setText(observationTime);
+                    weatherTV.setText(weather);
+                    temperatureTV.setText(tempString);
+                    windTV.setText(windString);
+                }
 
                 Toast.makeText(getApplicationContext(), "Data updated!", Toast.LENGTH_SHORT).show();
 
-                //next, data will be updated from shared preferences every 45 mins.
+                //next, data will be updated in shared preferences every 45 mins.
                 sharedpreferences = context.getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
 
