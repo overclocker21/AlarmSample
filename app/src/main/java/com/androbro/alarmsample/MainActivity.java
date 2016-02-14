@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             //setting up Alarm service to run every 5 sec
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                    5000, pendingIntent);
+                    3600000, pendingIntent);
     }
 
 
