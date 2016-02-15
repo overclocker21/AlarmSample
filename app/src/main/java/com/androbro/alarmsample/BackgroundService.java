@@ -92,7 +92,7 @@ public class BackgroundService extends Service{
 
             sendBroadcast(broadcastIntent);
 
-            Log.i("APPLICATION", "BACKGROUND SERVICE IS RUNNING");
+            Log.i("APPLICATION", "Background service is running");
             stopSelf();//stop service when it's done parsing
         }
     };
@@ -108,7 +108,7 @@ public class BackgroundService extends Service{
             this.isRunning = true;
             this.backgroundThread.start();
         }
-        //we want to redeliver our intent if the app was forcestopped:
+        //we want to redeliver our intent if the app was forcestopped and reopened:
         return START_REDELIVER_INTENT;
     }
 }

@@ -68,12 +68,16 @@ public class MainActivity extends AppCompatActivity {
 
         //setting up AlarmManager to schedule a service to run every hour through intent to receiver
         //that will trigger that service
-            Intent alarm = new Intent(this.context, AlarmReceiver.class);
+        Intent alarm = new Intent(this.context, AlarmReceiver.class);
+        //setting up control variable so we don't overwrite our previously created AlarmManager.
+        boolean alarmRunning = (PendingIntent.getBroadcast(this.context, 0, alarm, PendingIntent.FLAG_NO_CREATE) != null);
+        if(alarmRunning == false) {
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, alarm, 0);
             //setting up Alarm service to run every 5 sec
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
                     5000, pendingIntent);
+        }
     }
 
 
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Weather receivedWeather = (Weather) intent.getSerializableExtra("object");
 
+                //getting weather data from deserialized object
                 String stationId = receivedWeather.getStationId();
                 String observationTime = receivedWeather.getObservationTime();
                 String weather = receivedWeather.getWeather();
