@@ -13,7 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 import android.widget.Toast;
 
-//in this activity we'll trigger alarm service
+
 public class MainActivity extends AppCompatActivity {
 
     private Context context;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         //when the app first starts sometimes it takes couple of seconds to parse data, fill up the
         //shared prefs file and set up the values. So here I put default values stating that information
-        //is being updated.
+        //is being updated. After that the AlarmManager schedules the service to run and update data.
         String stationId = sharedpreferences.getString("station", "Updating..");
         String observationTime = sharedpreferences.getString("observation", "Updating..");
         String weather = sharedpreferences.getString("weather", "Updating..");
@@ -66,6 +66,8 @@ public class MainActivity extends AppCompatActivity {
         receiver = new MyWebRequestReceiver();
         registerReceiver(receiver, filter);
 
+        //setting up AlarmManager to schedule a service to run every hour through intent to receiver
+        //that will trigger that service
             Intent alarm = new Intent(this.context, AlarmReceiver.class);
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, alarm, 0);
             //setting up Alarm service to run every 5 sec
@@ -100,9 +102,10 @@ public class MainActivity extends AppCompatActivity {
                 String windString = receivedWeather.getWind();
 
                 //setting up values right away after the service completes parsing data
-                //for the firat time. And also checking if the returned object's field is equal to
+                //for the first time. And also checking if the returned object's field is equal to
                 //null. If it is, then something happened with the connection, so we don't need
-                //to store it in SharedPrefs file.
+                //to store it in SharedPrefs file. We check just stationId, because if it's null
+                //then others will be null too.
                 if (stationId == null){
                     Toast.makeText(getApplicationContext(), "No internet connection, last updated data loaded",
                             Toast.LENGTH_SHORT).show();
@@ -117,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Toast.makeText(getApplicationContext(), "Data updated!", Toast.LENGTH_SHORT).show();
 
-                //next, data will be updated in shared preferences every 45 mins.
+                //next, data will be updated in shared preferences every hour.
                 sharedpreferences = context.getSharedPreferences(PREFERENCE_FILE, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedpreferences.edit();
 

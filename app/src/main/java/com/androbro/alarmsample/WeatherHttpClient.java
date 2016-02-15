@@ -1,5 +1,7 @@
 package com.androbro.alarmsample;
 
+import android.util.Log;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -28,15 +30,12 @@ public class WeatherHttpClient {
             DocumentBuilderFactory builderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder documentBuilder = builderFactory.newDocumentBuilder();
             Document xmlDocument = documentBuilder.parse(inputStream);
-
             //getting root element of the XML doc
             Element rootElement = xmlDocument.getDocumentElement();
-
             NodeList list = rootElement.getChildNodes();
-
             return list;
         } catch (Exception e) {
-
+            Log.i("SET","Unable to parse data");
         }
         return null;
     }
