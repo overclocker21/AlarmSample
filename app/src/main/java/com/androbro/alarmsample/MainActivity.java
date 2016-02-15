@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             //setting up Alarm service to run every 5 sec
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(),
-                    3600000, pendingIntent);
+                    5000, pendingIntent);
     }
 
 
@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 //null. If it is, then something happened with the connection, so we don't need
                 //to store it in SharedPrefs file.
                 if (stationId == null){
-                    Toast.makeText(getApplicationContext(), "No internet connection, last updated date loaded",
+                    Toast.makeText(getApplicationContext(), "No internet connection, last updated data loaded",
                             Toast.LENGTH_SHORT).show();
                     return;
                 }else {
